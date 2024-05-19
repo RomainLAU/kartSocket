@@ -51,6 +51,12 @@ function create() {
       }
     });
   });
+  this.socket.on('teamWin', function (team) {
+    alert(`${team === 'red' ? 'Red' : 'Blue'} team wins!`);
+
+    // remove all players
+    self.car.destroy();
+  });
   this.socket.on('newPlayer', function (playerInfo) {
     addOtherPlayers(self, playerInfo);
   });

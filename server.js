@@ -1,9 +1,9 @@
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io').listen(server);
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io').listen(server);
 
-var players = {};
+let players = {};
 const starPositions = [
   { x: 100, y: 120 },
   { x: 700, y: 120 },
@@ -12,12 +12,23 @@ const starPositions = [
   { x: 400, y: 280 },
   { x: 250, y: 280 },
   { x: 550, y: 460 },
-  { x: 205, y: 460 },
 ];
 var scores = {
   blue: 0,
   red: 0,
-};
+}; 
+
+let starLocation = 0;
+
+const getStarLocation = () => {  
+  const lastStarLocation = starLocation;
+
+  while (lastStarLocation === starLocation) {
+    starLocation = Math.floor(Math.random() * starPositions.length);
+  }
+
+  return starPositions[starLocation];
+}
 
 app.use(express.static(__dirname + '/public'));
 
@@ -38,7 +49,7 @@ io.on('connection', function (socket) {
   // send the players object to the new player
   socket.emit('currentPlayers', players);
   // send the star object to the new player
-  socket.emit('starLocation', starPositions[Math.floor(Math.random() * starPositions.length)]);
+  socket.emit('starLocation', starPositions[starLocation]);
   // send the current scores
   socket.emit('scoreUpdate', scores);
   // update all other players of the new player
@@ -64,11 +75,25 @@ io.on('connection', function (socket) {
   socket.on('teamLap', function () {
     if (players[socket.id].team === 'red') {
       scores.red += 1;
+
+      if (scores.red === 8) {
+        socket.emit('teamWin', 'red');
+
+        scores.red = 0;
+        scores.blue = 0;
+      }
     } else {
       scores.blue += 1;
+
+      if (scores.blue === 8) {
+        socket.emit('teamWin', 'blue');
+
+        scores.red = 0;
+        scores.blue = 0;
+      }
     }
 
-    io.emit('starLocation', starPositions[Math.floor(Math.random() * starPositions.length)]);
+    io.emit('starLocation', getStarLocation());
     io.emit('scoreUpdate', scores);
   });
 

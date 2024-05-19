@@ -9,7 +9,7 @@
         flex-direction: column-reverse;
         justify-content: center;
         align-items: center;
-        row-gap: 4em;
+        row-gap: 2em;
       }
       #switchTeam {
         background-color: rgb(106, 106, 209);
@@ -46,6 +46,11 @@
       <button id="switchTeam">Change side</button>
       <button id="startGame">Start game</button>
     </div>
+    <i>Use arrow keys to move. Collect 8 stars to win !</i>
+    <h1>
+      <span id="state">Game Over</span>
+    </h1>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.3.0/dist/phaser.min.js"></script>
     <script id="game" src="js/game.js"></script>

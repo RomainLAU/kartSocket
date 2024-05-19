@@ -66,8 +66,14 @@ function create() {
       }
     });
   });
-  this.socket.on('gameStarted', function () {
-    startedGame = true;
+  this.socket.on('gameState', function (gameState) {
+    startedGame = gameState;
+
+    if (startedGame) {
+      document.querySelector('#state').innerHTML = 'Game Started';
+    } else {
+      document.querySelector('#state').innerHTML = 'Game Over';
+    }
   });
   this.socket.on('playerMoved', function (playerInfo) {
     self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -122,6 +128,7 @@ function create() {
   });
 
   document.getElementById('startGame').addEventListener('click', function () {
+    document.querySelector('#state').innerHTML = 'Game Started';
     self.socket.emit('startGame');
   });
 }

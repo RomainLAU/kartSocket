@@ -16,13 +16,13 @@ const starPositions = [
 var scores = {
   blue: 0,
   red: 0,
-}; 
+};
 
 let gameStarted = false;
 
 let starLocation = 0;
 
-const getStarLocation = () => {  
+const getStarLocation = () => {
   const lastStarLocation = starLocation;
 
   while (lastStarLocation === starLocation) {
@@ -30,7 +30,7 @@ const getStarLocation = () => {
   }
 
   return starPositions[starLocation];
-}
+};
 
 app.use(express.static(__dirname + '/public'));
 
@@ -48,6 +48,8 @@ io.on('connection', function (socket) {
     playerId: socket.id,
     team: Math.floor(Math.random() * 2) == 0 ? 'red' : 'blue',
   };
+
+  socket.emit('gameState', gameStarted);
   // send the players object to the new player
   socket.emit('currentPlayers', players);
   // send the star object to the new player
@@ -72,7 +74,7 @@ io.on('connection', function (socket) {
 
     gameStarted = true;
     io.emit('starLocation', getStarLocation());
-    io.emit('gameStarted');
+    io.emit('gameState', gameStarted);
   });
 
   // when a player moves, update the player data
@@ -80,7 +82,7 @@ io.on('connection', function (socket) {
     if (gameStarted === false) {
       return;
     } else {
-    players[socket.id].x = movementData.x;
+      players[socket.id].x = movementData.x;
       players[socket.id].y = movementData.y;
       players[socket.id].rotation = movementData.rotation;
       // emit a message to all players about the player that moved
@@ -113,6 +115,7 @@ io.on('connection', function (socket) {
       }
     }
 
+    socket.emit('gameState', gameStarted);
     io.emit('starLocation', getStarLocation());
     io.emit('scoreUpdate', scores);
   });

@@ -87,7 +87,7 @@ function create() {
   });
   this.cursors = this.input.keyboard.createCursorKeys();
 
-  this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#0000FF' });
+  this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#3333ff' });
   this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#FF0000' });
 
   this.socket.on('scoreUpdate', function (scores) {
@@ -98,23 +98,21 @@ function create() {
   this.socket.on('starLocation', async function (starLocation) {
     if (self.star) self.star.destroy();
 
-    setTimeout(() => {
-      self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star');
-      self.physics.add.overlap(
-        self.car,
-        self.star,
-        function () {
-          this.socket.emit('teamLap');
-          this.car.data += 100;
+    self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star');
+    self.physics.add.overlap(
+      self.car,
+      self.star,
+      function () {
+        this.socket.emit('teamLap');
+        this.car.data += 100;
 
-          setTimeout(() => {
-            this.car.data -= 100;
-          }, 3000);
-        },
-        null,
-        self
-      );
-    }, 500);
+        setTimeout(() => {
+          this.car.data -= 100;
+        }, 3000);
+      },
+      null,
+      self
+    );
 
     return true;
   });

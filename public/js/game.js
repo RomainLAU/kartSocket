@@ -88,6 +88,7 @@ function create() {
   });
 
   this.socket.on('starLocation', function (starLocation) {
+    console.log(starLocation);
     if (self.star) self.star.destroy();
     self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star');
     self.physics.add.overlap(
@@ -116,12 +117,12 @@ function diagonal90DegreesBorder(x, y, numberOfPoints, downOrUp) {
     if (downOrUp === 'down') {
       this.borders
         .create(x + i, y + i, 'border')
-        .setScale(0.1, 0.1)
+        .setScale(0.001, 0.001)
         .refreshBody();
     } else {
       this.borders
         .create(x + i, y - i, 'border')
-        .setScale(0.1, 0.1)
+        .setScale(0.001, 0.001)
         .refreshBody();
     }
   }
@@ -135,16 +136,35 @@ function addPlayer(self, playerInfo) {
     self.car.setTint(0xff0000);
   }
 
+  // Outside borders
   this.borders = self.physics.add.staticGroup();
 
+  diagonal90DegreesBorder(0, 145, 65, 'up');
   this.borders.create(155, 90, 'border').setScale(5.5, 0.001).refreshBody();
-  diagonal90DegreesBorder(245, 90, 65, 'down');
+  diagonal90DegreesBorder(255, 80, 65, 'down');
   this.borders.create(310, 210, 'border').setScale(0.001, 4).refreshBody();
-  diagonal90DegreesBorder(298, 270, 15, 'down');
-  diagonal90DegreesBorder(345, 285, 195, 'up');
+  diagonal90DegreesBorder(318, 260, 15, 'down');
+  this.borders.create(340, 285, 'border').setScale(1, 0.001).refreshBody();
+  diagonal90DegreesBorder(355, 275, 185, 'up');
+  diagonal90DegreesBorder(735, 80, 65, 'down');
+  diagonal90DegreesBorder(640, 520, 195, 'up');
+  diagonal90DegreesBorder(0, 460, 65, 'down');
 
-  this.borders.create(340, 285, 'border').setScale(1.5, 0.1).refreshBody();
-  this.borders.create(355, 405, 'border').setScale(14, 0.1).refreshBody();
+  // Inside borders
+  diagonal90DegreesBorder(125, 220, 20, 'up');
+  this.borders.create(165, 200, 'border').setScale(1, 0.001).refreshBody();
+  diagonal90DegreesBorder(170, 200, 25, 'down');
+  this.borders.create(195, 275, 'border').setScale(0.001, 3.5).refreshBody();
+  diagonal90DegreesBorder(180, 330, 75, 'down');
+  this.borders.create(340, 390, 'border').setScale(5, 0.001).refreshBody();
+  diagonal90DegreesBorder(435, 400, 185, 'up');
+  this.borders.create(645, 200, 'border').setScale(1, 0.001).refreshBody();
+  diagonal90DegreesBorder(660, 200, 15, 'down');
+  this.borders.create(680, 250, 'border').setScale(0.001,2.5).refreshBody();
+  diagonal90DegreesBorder(570, 395, 105, 'up');
+  this.borders.create(355, 405, 'border').setScale(13, 0.001).refreshBody();
+  diagonal90DegreesBorder(130, 385, 10, 'down');
+  this.borders.create(120, 305, 'border').setScale(0.001, 5).refreshBody();
 
   self.physics.add.collider(self.car, this.borders);
 }

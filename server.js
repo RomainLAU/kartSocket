@@ -4,10 +4,16 @@ var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
 
 var players = {};
-var star = {
-  x: Math.floor(Math.random() * 700) + 80,
-  y: Math.floor(Math.random() * 400) + 90,
-};
+const starPositions = [
+  { x: 100, y: 120 },
+  { x: 700, y: 120 },
+  { x: 100, y: 400 },
+  { x: 700, y: 400 },
+  { x: 400, y: 280 },
+  { x: 250, y: 280 },
+  { x: 550, y: 460 },
+  { x: 205, y: 460 },
+];
 var scores = {
   blue: 0,
   red: 0,
@@ -32,7 +38,7 @@ io.on('connection', function (socket) {
   // send the players object to the new player
   socket.emit('currentPlayers', players);
   // send the star object to the new player
-  socket.emit('starLocation', star);
+  socket.emit('starLocation', starPositions[Math.floor(Math.random() * starPositions.length)]);
   // send the current scores
   socket.emit('scoreUpdate', scores);
   // update all other players of the new player
@@ -61,9 +67,8 @@ io.on('connection', function (socket) {
     } else {
       scores.blue += 10;
     }
-    star.x = Math.floor(Math.random() * 700) + 80;
-    star.y = Math.floor(Math.random() * 400) + 90;
-    io.emit('starLocation', star);
+
+    io.emit('starLocation', starPositions[Math.floor(Math.random() * starPositions.length)]);
     io.emit('scoreUpdate', scores);
   });
 

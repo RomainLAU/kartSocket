@@ -52,10 +52,8 @@ function create() {
     });
   });
   this.socket.on('teamWin', function (team) {
-    alert(`${team === 'red' ? 'Red' : 'Blue'} team wins!`);
-
-    // remove all players
-    self.car.destroy();
+    if (self.star) self.star.destroy();
+    alert('Team ' + team + ' wins!');
   });
   this.socket.on('newPlayer', function (playerInfo) {
     addOtherPlayers(self, playerInfo);
@@ -93,8 +91,7 @@ function create() {
     self.redScoreText.setText('Red: ' + scores.red);
   });
 
-  this.socket.on('starLocation', function (starLocation) {
-    console.log(starLocation);
+  this.socket.on('starLocation', async function (starLocation) {
     if (self.star) self.star.destroy();
     self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star');
     self.physics.add.overlap(
@@ -111,6 +108,8 @@ function create() {
       null,
       self
     );
+
+    return true;
   });
 
   document.getElementById('switchTeam').addEventListener('click', function () {

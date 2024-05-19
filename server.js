@@ -73,6 +73,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('teamLap', function () {
+    console.log('teamLap');
     if (players[socket.id].team === 'red') {
       scores.red += 1;
 

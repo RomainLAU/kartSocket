@@ -95,7 +95,7 @@ function create() {
       self.car,
       self.star,
       function () {
-        this.socket.emit('starCollected');
+        this.socket.emit('teamLap');
         this.car.data += 100;
 
         setTimeout(() => {

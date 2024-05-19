@@ -61,11 +61,11 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('playerMoved', players[socket.id]);
   });
 
-  socket.on('starCollected', function () {
+  socket.on('teamLap', function () {
     if (players[socket.id].team === 'red') {
-      scores.red += 10;
+      scores.red += 1;
     } else {
-      scores.blue += 10;
+      scores.blue += 1;
     }
 
     io.emit('starLocation', starPositions[Math.floor(Math.random() * starPositions.length)]);

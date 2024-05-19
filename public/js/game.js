@@ -32,6 +32,8 @@ let bwMatrix = [
   0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0, 0, 0, 1, 0,
 ];
 
+let startedGame = false;
+
 function create() {
   let self = this;
   this.socket = io();
@@ -53,7 +55,10 @@ function create() {
   });
   this.socket.on('teamWin', function (team) {
     if (self.star) self.star.destroy();
-    alert('Team ' + team + ' wins!');
+
+    alert('Team ' + team + ' wins! Restarting the page');
+    location.reload();
+    startedGame = false;
   });
   this.socket.on('newPlayer', function (playerInfo) {
     addOtherPlayers(self, playerInfo);
@@ -64,6 +69,9 @@ function create() {
         otherPlayer.destroy();
       }
     });
+  });
+  this.socket.on('gameStarted', function () {
+    startedGame = true;
   });
   this.socket.on('playerMoved', function (playerInfo) {
     self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -114,6 +122,10 @@ function create() {
 
   document.getElementById('switchTeam').addEventListener('click', function () {
     changeTeam(self);
+  });
+
+  document.getElementById('startGame').addEventListener('click', function () {
+    self.socket.emit('startGame');
   });
 }
 
@@ -187,7 +199,7 @@ function addOtherPlayers(self, playerInfo) {
 }
 
 function update() {
-  if (this.car) {
+  if (this.car && startedGame) {
     if (this.cursors.left.isDown) {
       this.car.setAngularVelocity(-150 - this.car.data);
     } else if (this.cursors.right.isDown) {

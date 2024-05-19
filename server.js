@@ -18,6 +18,8 @@ var scores = {
   red: 0,
 }; 
 
+let gameStarted = false;
+
 let starLocation = 0;
 
 const getStarLocation = () => {  
@@ -63,17 +65,30 @@ io.on('connection', function (socket) {
     io.emit('disconnect', socket.id);
   });
 
+  socket.on('startGame', function () {
+    if (gameStarted) {
+      return;
+    }
+
+    gameStarted = true;
+    io.emit('starLocation', getStarLocation());
+    io.emit('gameStarted');
+  });
+
   // when a player moves, update the player data
   socket.on('playerMovement', function (movementData) {
+    if (gameStarted === false) {
+      return;
+    } else {
     players[socket.id].x = movementData.x;
-    players[socket.id].y = movementData.y;
-    players[socket.id].rotation = movementData.rotation;
-    // emit a message to all players about the player that moved
-    socket.broadcast.emit('playerMoved', players[socket.id]);
+      players[socket.id].y = movementData.y;
+      players[socket.id].rotation = movementData.rotation;
+      // emit a message to all players about the player that moved
+      socket.broadcast.emit('playerMoved', players[socket.id]);
+    }
   });
 
   socket.on('teamLap', function () {
-    console.log('teamLap');
     if (players[socket.id].team === 'red') {
       scores.red += 1;
 
@@ -82,6 +97,8 @@ io.on('connection', function (socket) {
 
         scores.red = 0;
         scores.blue = 0;
+
+        gameStarted = false;
       }
     } else {
       scores.blue += 1;
@@ -91,6 +108,8 @@ io.on('connection', function (socket) {
 
         scores.red = 0;
         scores.blue = 0;
+
+        gameStarted = false;
       }
     }
 

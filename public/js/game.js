@@ -28,10 +28,6 @@ function preload() {
   );
 }
 
-let bwMatrix = [
-  0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0, 0, 0, 1, 0,
-];
-
 let startedGame = false;
 
 function create() {
@@ -101,21 +97,24 @@ function create() {
 
   this.socket.on('starLocation', async function (starLocation) {
     if (self.star) self.star.destroy();
-    self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star');
-    self.physics.add.overlap(
-      self.car,
-      self.star,
-      function () {
-        this.socket.emit('teamLap');
-        this.car.data += 100;
 
-        setTimeout(() => {
-          this.car.data -= 100;
-        }, 3000);
-      },
-      null,
-      self
-    );
+    setTimeout(() => {
+      self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star');
+      self.physics.add.overlap(
+        self.car,
+        self.star,
+        function () {
+          this.socket.emit('teamLap');
+          this.car.data += 100;
+
+          setTimeout(() => {
+            this.car.data -= 100;
+          }, 3000);
+        },
+        null,
+        self
+      );
+    }, 500);
 
     return true;
   });
@@ -177,7 +176,7 @@ function addPlayer(self, playerInfo) {
   diagonal90DegreesBorder(435, 400, 185, 'up');
   this.borders.create(645, 200, 'border').setScale(1, 0.001).refreshBody();
   diagonal90DegreesBorder(660, 200, 15, 'down');
-  this.borders.create(680, 250, 'border').setScale(0.001,2.5).refreshBody();
+  this.borders.create(680, 250, 'border').setScale(0.001, 2.5).refreshBody();
   diagonal90DegreesBorder(570, 395, 105, 'up');
   this.borders.create(355, 405, 'border').setScale(13, 0.001).refreshBody();
   diagonal90DegreesBorder(130, 385, 10, 'down');
